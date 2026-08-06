@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Administrativo</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+  <div class="app-layout">
+
+    <!-- ============================================================
+         MENÚ LATERAL
+         Contraible/expandible mediante el botón #toggle-sidebar.
+         El estado (contraído/expandido) se guarda en localStorage
+         para persistir entre recargas.
+    ============================================================= -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⬢</span>
+          <span class="logo-text">ERP System</span>
+        </div>
+        <button id="toggle-sidebar" class="btn-toggle" title="Contraer/Expandir menú">
+          <span>☰</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active" data-tooltip="Inicio">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-text">Inicio</span>
+        </a>
+        <a href="productos.html" class="nav-item" data-tooltip="Productos">
+          <span class="nav-icon">📦</span>
+          <span class="nav-text">Productos</span>
+        </a>
+        <a href="#" class="nav-item disabled" data-tooltip="Reportes">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Reportes</span>
+        </a>
+        <a href="#" class="nav-item disabled" data-tooltip="Usuarios">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Usuarios</span>
+        </a>
+        <a href="#" class="nav-item disabled" data-tooltip="Configuración">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Configuración</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" id="logout-btn" class="nav-item" data-tooltip="Cerrar sesión">
+          <span class="nav-icon">🚪</span>
+          <span class="nav-text">Cerrar sesión</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- ============================================================
+         CONTENIDO PRINCIPAL
+    ============================================================= -->
+    <div class="main-content">
+
+      <!-- ============== ENCABEZADO ============== -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="toggle-sidebar-mobile" class="btn-icon mobile-only" title="Menú">☰</button>
+          <h1 class="system-title">Panel Administrativo</h1>
+        </div>
+
+        <div class="topbar-center">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="global-search" placeholder="Buscar productos..." autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="datetime-box">
+            <span id="current-date" class="current-date">--</span>
+            <span id="current-time" class="current-time">--:--:--</span>
+          </div>
+
+          <div class="notification-wrapper">
+            <button id="notif-btn" class="btn-icon" title="Notificaciones">
+              🔔
+              <span id="notif-badge" class="badge hidden">0</span>
+            </button>
+            <div id="notif-dropdown" class="notif-dropdown hidden">
+              <div class="notif-dropdown-header">Notificaciones</div>
+              <div id="notif-list" class="notif-list">
+                <p class="notif-empty">Sin notificaciones nuevas</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="user-info">
+            <div class="user-avatar">AD</div>
+            <div class="user-meta">
+              <span class="user-name">Administrador</span>
+              <span class="user-role">Administrador</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ============== CONTENIDO SCROLLEABLE ============== -->
+      <main class="content-area">
+
+        <!-- Tarjeta de información del usuario -->
+        <section class="user-card">
+          <div class="user-card-avatar">AD</div>
+          <div class="user-card-info">
+            <h2 id="user-card-name">Administrador</h2>
+            <p class="user-card-role">Administrador</p>
+            <div class="user-card-status">
+              <span class="status-dot online"></span>
+              <span>En línea</span>
+            </div>
+            <p class="user-card-last-access">Último acceso: <span id="last-access">--</span></p>
+          </div>
+        </section>
+
+        <!-- Tarjetas resumen -->
+        <section class="stats-grid">
+          <div class="stat-card stat-blue" style="--delay: 0s">
+            <div class="stat-icon">📦</div>
+            <div class="stat-info">
+              <span class="stat-label">Total de productos</span>
+              <span class="stat-number" id="stat-total" data-target="0">0</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-green" style="--delay: 0.1s">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <span class="stat-label">Productos activos</span>
+              <span class="stat-number" id="stat-active" data-target="0">0</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-red" style="--delay: 0.2s">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-info">
+              <span class="stat-label">Productos agotados</span>
+              <span class="stat-number" id="stat-outofstock" data-target="0">0</span>
+            </div>
+          </div>
+
+          <div class="stat-card stat-purple" style="--delay: 0.3s">
+            <div class="stat-icon">🏷️</div>
+            <div class="stat-info">
+              <span class="stat-label">Categorías registradas</span>
+              <span class="stat-number" id="stat-categories" data-target="0">0</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Productos recientes -->
+        <section class="recent-section">
+          <div class="recent-header">
+            <h3>Productos recientes</h3>
+            <a href="productos.html" class="link-view-all">Ver todos →</a>
+          </div>
+
+          <div class="table-wrapper">
+            <table class="recent-table">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="recent-products-body">
+                <!-- Filas generadas dinámicamente por dashboard.js -->
+              </tbody>
+            </table>
+            <p id="recent-empty" class="empty-message hidden">
+              Aún no hay productos registrados. Ve al módulo de Productos para agregar el primero.
+            </p>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
