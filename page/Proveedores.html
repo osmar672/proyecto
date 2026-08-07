@@ -275,3 +275,401 @@
     <script src="js/proveedores.js"></script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Administrativo - Gestión de Inteligencia (IA)</title>
+  <!-- Tailwind CSS para diseño moderno y responsivo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome para Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Estilos personalizados para el Chat e Interfaz */
+    .chat-container {
+      height: calc(100vh - 180px);
+    }
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+    }
+    /* Scrollbar estilizada */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #475569;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col md:flex-row">
+
+  <!-- ==================== SIDEBAR / NAVEGACIÓN ==================== -->
+  <aside class="w-full md:w-64 bg-slate-800 border-r border-slate-700 p-4 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center gap-3 mb-8 px-2">
+        <div class="bg-indigo-600 p-2 rounded-lg">
+          <i class="fa-solid fa-brain text-xl text-white"></i>
+        </div>
+        <span class="font-bold text-lg tracking-wide text-white">AdminAI Core</span>
+      </div>
+
+      <!-- Selector de Rol para Demostración -->
+      <div class="mb-6 p-3 bg-slate-900/60 rounded-xl border border-slate-700">
+        <label for="roleSelector" class="text-xs font-semibold uppercase text-slate-400 block mb-2">Simular Rol Activo:</label>
+        <select id="roleSelector" onchange="changeRole(this.value)" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2 text-sm text-indigo-300 focus:outline-none focus:border-indigo-500">
+          <option value="CLIENTE">Cliente (Juan Pérez)</option>
+          <option value="ADMINISTRADOR">Administrador (SuperAdmin)</option>
+          <option value="PROVEEDOR">Proveedor (TechCorp)</option>
+        </select>
+      </div>
+
+      <!-- Menú de Navegación -->
+      <nav class="space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-600/20 text-indigo-400 font-medium border border-indigo-500/30">
+          <i class="fa-solid fa-robot"></i> Asistente IA
+        </a>
+        <a href="#" onclick="openModal('modalPerfil')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition">
+          <i class="fa-solid fa-user"></i> Mi Perfil
+        </a>
+        <a href="#" onclick="simulateQuery('Mostrar mis compras')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition">
+          <i class="fa-solid fa-bag-shopping"></i> Mis Compras
+        </a>
+        <a href="#" onclick="simulateQuery('Ver estado de mi devolución')" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-700/50 hover:text-slate-200 transition">
+          <i class="fa-solid fa-rotate-left"></i> Devoluciones
+        </a>
+      </nav>
+    </div>
+
+    <!-- Info del Usuario Autenticado -->
+    <div class="pt-4 border-t border-slate-700 flex items-center gap-3">
+      <img id="userAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" alt="Avatar" class="w-10 h-10 rounded-full border border-indigo-500">
+      <div class="overflow-hidden">
+        <p id="userName" class="text-sm font-semibold truncate text-slate-200">Juan Pérez</p>
+        <p id="userRoleBadge" class="text-xs text-indigo-400 font-mono">ROLE_CLIENTE</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== ÁREA PRINCIPAL / MÓDULO IA ==================== -->
+  <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-900">
+    <!-- Header Superior -->
+    <header class="h-16 border-b border-slate-700 px-6 flex items-center justify-between bg-slate-800/50 backdrop-blur">
+      <div class="flex items-center gap-3">
+        <h1 class="text-lg font-semibold text-slate-100">Gestión de la Inteligencia (IA)</h1>
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Contexto Seguro Activo
+        </span>
+      </div>
+      <div class="text-xs text-slate-400">
+        <i class="fa-solid fa-shield-halved text-indigo-400 mr-1"></i> Sesión Autenticada via JWT
+      </div>
+    </header>
+
+    <!-- Contenedor del Chat -->
+    <div class="flex-1 p-4 md:p-6 flex flex-col justify-between max-w-5xl w-full mx-auto overflow-hidden">
+      
+      <!-- Ventana de Mensajes -->
+      <div id="chatWindow" class="chat-container overflow-y-auto space-y-4 pr-2">
+        <!-- Mensaje Inicial del Asistente -->
+        <div class="flex gap-3 max-w-3xl">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+            <i class="fa-solid fa-bot text-sm"></i>
+          </div>
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-4 text-sm text-slate-300 leading-relaxed space-y-2">
+            <p>Hola <strong id="welcomeName" class="text-white">Juan</strong>, soy el asistente virtual del sistema. ¿En qué puedo ayudarte hoy?</p>
+            <p class="text-xs text-slate-400">Puedo ayudarte a consultar tus compras, gestionar devoluciones, navegar por el sistema o abrir modales de edición de perfil.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Atajos Rápidos -->
+      <div class="py-2 flex gap-2 overflow-x-auto text-xs text-slate-400">
+        <span class="self-center font-semibold text-slate-500 shrink-0">Sugerencias:</span>
+        <button onclick="simulateQuery('Mostrar mis compras')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-full whitespace-nowrap transition">
+          🛒 Mis compras
+        </button>
+        <button onclick="simulateQuery('¿Por qué rechazaron mi devolución?')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-full whitespace-nowrap transition">
+          ⚠️ Motivo de rechazo de devolución
+        </button>
+        <button onclick="simulateQuery('Quiero cambiar mi contraseña')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-full whitespace-nowrap transition">
+          🔒 Modificar contraseña
+        </button>
+        <button onclick="simulateQuery('Ver lista de todos los usuarios')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-1.5 rounded-full whitespace-nowrap transition">
+          🚫 Ver todos los usuarios (Prueba de Permisos)
+        </button>
+      </div>
+
+      <!-- Input de Texto y Envíos -->
+      <form onsubmit="handleUserSubmit(event)" class="relative mt-1">
+        <input 
+          type="text" 
+          id="userInput" 
+          placeholder="Escribe tu consulta o instrucción..." 
+          class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-4 pr-12 py-3.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-lg"
+          autocomplete="off"
+        >
+        <button type="submit" class="absolute right-2 top-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-lg transition">
+          <i class="fa-solid fa-paper-plane text-sm"></i>
+        </button>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODALES DEL SISTEMA ==================== -->
+
+  <!-- Modal: Editar Perfil -->
+  <div id="modalPerfil" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all">
+      <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+        <h3 class="font-semibold text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-user-gear text-indigo-400"></i> Editar Mi Perfil
+        </h3>
+        <button onclick="closeModal('modalPerfil')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveModalData(event, 'Perfil actualizado con éxito')" class="p-6 space-y-4">
+        <div>
+          <label class="text-xs text-slate-400 uppercase font-semibold block mb-1">Nombre Completo</label>
+          <input type="text" id="inputNombre" value="Juan Pérez" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 uppercase font-semibold block mb-1">Correo Electrónico</label>
+          <input type="email" value="juan.perez@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 uppercase font-semibold block mb-1">Teléfono</label>
+          <input type="text" value="+52 55 1234 5678" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" onclick="closeModal('modalPerfil')" class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-700">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm bg-indigo-600 hover:bg-indigo-500 text-white font-medium">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cambiar Contraseña -->
+  <div id="modalPassword" class="fixed inset-0 modal-backdrop hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+        <h3 class="font-semibold text-slate-100 flex items-center gap-2">
+          <i class="fa-solid fa-key text-amber-400"></i> Cambiar Contraseña
+        </h3>
+        <button onclick="closeModal('modalPassword')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="saveModalData(event, 'Contraseña modificada correctamente')" class="p-6 space-y-4">
+        <div>
+          <label class="text-xs text-slate-400 uppercase font-semibold block mb-1">Contraseña Actual</label>
+          <input type="password" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200" required>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 uppercase font-semibold block mb-1">Nueva Contraseña</label>
+          <input type="password" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200" required>
+        </div>
+        <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+          <button type="button" onclick="closeModal('modalPassword')" class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-700">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm bg-amber-600 hover:bg-amber-500 text-white font-medium">Actualizar Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
+  <script>
+    // Estado global simulado del usuario autenticado
+    let currentUser = {
+      id: "USR-101",
+      name: "Juan Pérez",
+      role: "CLIENTE",
+      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100"
+    };
+
+    // Base de datos simulada respetando la propiedad de datos
+    const dbPurchases = {
+      "USR-101": [
+        { id: "PED-9981", date: "2026-08-01", total: "$1,200.00", status: "Entregado", items: "1x Monitor 27 pulgadas" },
+        { id: "PED-9850", date: "2026-07-15", total: "$450.00", status: "Devuelto (Rechazado)", items: "1x Teclado Mecánico RGB" }
+      ],
+      "USR-102": [
+        { id: "PED-7741", date: "2026-08-05", total: "$3,400.00", status: "Procesando", items: "1x Laptop Pro" }
+      ]
+    };
+
+    const dbReturns = {
+      "PED-9850": {
+        product: "Teclado Mecánico RGB",
+        qty: 1,
+        status: "RECHAZADO",
+        code: "PRODUCT_DAMAGED_BY_CLIENT",
+        reason: "Producto dañado por el cliente",
+        comments: "El equipo técnico determinó que el circuito interno presenta cortocircuito por derrame de líquido no cubierto por la garantía."
+      }
+    };
+
+    // Cambiar Rol de Usuario
+    function changeRole(role) {
+      currentUser.role = role;
+      if (role === 'CLIENTE') {
+        currentUser.name = "Juan Pérez";
+        currentUser.id = "USR-101";
+      } else if (role === 'ADMINISTRADOR') {
+        currentUser.name = "SuperAdmin System";
+        currentUser.id = "USR-000";
+      } else {
+        currentUser.name = "TechCorp Inc.";
+        currentUser.id = "USR-555";
+      }
+      
+      document.getElementById('userName').innerText = currentUser.name;
+      document.getElementById('welcomeName').innerText = currentUser.name;
+      document.getElementById('userRoleBadge').innerText = 'ROLE_' + role;
+      
+      addBotMessage(`Has cambiado al rol **${role}**. El contexto de seguridad y los permisos de la IA se han reconfigurado.`);
+    }
+
+    // Manejador del Input de Usuario
+    function handleUserSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addUserMessage(text);
+      input.value = '';
+
+      // Procesar Inteligencia / Reglas de Seguridad
+      setTimeout(() => {
+        processAIResponse(text);
+      }, 600);
+    }
+
+    function simulateQuery(text) {
+      addUserMessage(text);
+      setTimeout(() => {
+        processAIResponse(text);
+      }, 500);
+    }
+
+    // Motor de Decisiones de la IA
+    function processAIResponse(query) {
+      const q = query.toLowerCase();
+
+      // REGULAR: Ver usuarios globales
+      if (q.includes('todos los usuarios') || q.includes('ver usuarios')) {
+        if (currentUser.role !== 'ADMINISTRADOR') {
+          addBotMessage(`❌ **Acceso Denegado**: Tu rol actual (${currentUser.role}) no posee permisos para consultar la lista global de usuarios. Esta acción ha sido registrada por seguridad.`);
+        } else {
+          addBotMessage(`Acceso concedido (**ADMINISTRADOR**). Mostrando listado global: \n• USR-101: Juan Pérez (Cliente)\n• USR-555: TechCorp (Proveedor)\n• USR-000: Admin (Administrador)`);
+        }
+        return;
+      }
+
+      // REGULA: Mis Compras
+      if (q.includes('compras') || q.includes('compré') || q.includes('historial')) {
+        const purchases = dbPurchases[currentUser.id] || [];
+        if (purchases.length === 0) {
+          addBotMessage(`No se encontraron compras asociadas a tu cuenta (**${currentUser.name}**).`);
+        } else {
+          let html = `Aquí están tus compras asociadas:<br><ul class="mt-2 space-y-2">`;
+          purchases.forEach(p => {
+            html += `<li class="p-2 bg-slate-900 rounded border border-slate-700 text-xs">
+                      <strong>${p.id}</strong> - ${p.items}<br>
+                      <span class="text-slate-400">Fecha: ${p.date} | Total: ${p.total} | Estado: <b class="text-indigo-400">${p.status}</b></span>
+                    </li>`;
+          });
+          html += `</ul>`;
+          addBotMessage(html);
+        }
+        return;
+      }
+
+      // REGULA: Explicación de Devoluciones Rechazadas
+      if (q.includes('devolución') || q.includes('rechaz')) {
+        const dev = dbReturns["PED-9850"];
+        addBotMessage(`
+          ⚠️ **Detalle de la Solicitud de Devolución**:
+          <br><br>
+          • **Producto:** ${dev.product}<br>
+          • **Estado:** <span class="text-red-400 font-bold">${dev.status}</span><br>
+          • **Motivo de Rechazo:** <span class="text-amber-400 font-semibold">${dev.reason}</span><br>
+          • **Explicación:** ${dev.comments}
+          <br><br>
+          <em>Si tienes dudas adicionales sobre este dictamen, puedes solicitar soporte con un agente humano.</em>
+        `);
+        return;
+      }
+
+      // REGULA: Invocación de Modales
+      if (q.includes('contraseña') || q.includes('password')) {
+        addBotMessage(`Para modificar tu contraseña de forma segura, he desplegado la ventana correspondiente.`);
+        openModal('modalPassword');
+        return;
+      }
+
+      if (q.includes('perfil') || q.includes('editar')) {
+        addBotMessage(`Abriendo el modal de edición para tu perfil...`);
+        openModal('modalPerfil');
+        return;
+      }
+
+      // Respuesta Genérica
+      addBotMessage(`Entendido. Como asistente del sistema, puedo ayudarte a navegar, revisar tu historial de compras o procesar solicitudes administrativas dentro de tus permisos.`);
+    }
+
+    // Renderizado de Mensajes
+    function addUserMessage(text) {
+      const chat = document.getElementById('chatWindow');
+      const msg = `
+        <div class="flex gap-3 max-w-3xl ml-auto justify-end">
+          <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none p-4 text-sm leading-relaxed">
+            ${escapeHtml(text)}
+          </div>
+        </div>`;
+      chat.insertAdjacentHTML('beforeend', msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function addBotMessage(text) {
+      const chat = document.getElementById('chatWindow');
+      const msg = `
+        <div class="flex gap-3 max-w-3xl">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white shrink-0">
+            <i class="fa-solid fa-bot text-sm"></i>
+          </div>
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl rounded-tl-none p-4 text-sm text-slate-300 leading-relaxed space-y-2">
+            ${text}
+          </div>
+        </div>`;
+      chat.insertAdjacentHTML('beforeend', msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Control de Modales
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function saveModalData(e, successMsg) {
+      e.preventDefault();
+      const modal = e.target.closest('.modal-backdrop');
+      closeModal(modal.id);
+      addBotMessage(`✅ **Acción Completada**: ${successMsg}.`);
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+  </script>
+</body>
+</html>
