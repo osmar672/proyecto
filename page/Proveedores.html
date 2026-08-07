@@ -275,3 +275,320 @@
     <script src="js/proveedores.js"></script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comprobante de Compra - PUR-2026-000849</title>
+
+  <!-- Tailwind CSS para diseño moderno -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Html2Pdf.js (Opcional: para descarga directa a PDF desde frontend) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    /* Estilos específicos para impresión / PDF */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .print-container {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .page-break {
+        page-break-after: always;
+      }
+    }
+
+    /* Tipografía compacta para documentos contables */
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen p-4 md:p-8">
+
+  <!-- BARRA DE HERRAMIENTAS / ACCIONES (No se imprime) -->
+  <div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4 no-print">
+    <div>
+      <h1 class="text-base font-bold text-slate-900">Módulo de Vista Previa de Documento</h1>
+      <p class="text-xs text-slate-500">Documento de comprobante listo para exportación o impresión.</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="window.print()" class="px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded border border-slate-300 transition flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        Imprimir
+      </button>
+      <button onclick="descargarPDF()" class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded transition flex items-center gap-1 shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+        Descargar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTO PRINCIPAL (Hoja A4) -->
+  <div id="documento-pdf" class="print-container max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md border border-slate-200">
+    
+    <!-- ENCABEZADO: DATOS DE LA EMPRESA Y CONSECUTIVO -->
+    <header class="flex justify-between items-start border-b-2 border-slate-800 pb-6 mb-6">
+      <div class="w-2/3">
+        <!-- Logo / Nombre Comercial -->
+        <div class="flex items-center gap-3 mb-2">
+          <div class="w-10 h-10 bg-blue-600 text-white font-black text-xl flex items-center justify-center rounded">CL</div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 leading-tight">Corporación Logística S.A.</h2>
+            <p class="text-xs font-semibold text-blue-600">CorpoLogistics | RUC/NIT: 3-101-554932</p>
+          </div>
+        </div>
+        <!-- Dirección y Contacto -->
+        <p class="text-xs text-slate-600">Avenida 3, Calle 15, Edificio Corpo, San José, San José, Costa Rica (CP 10101)</p>
+        <p class="text-xs text-slate-600">Teléfono: +506 2200-8800 | Correo: facturacion@corpologistics.com</p>
+        <p class="text-xs text-slate-600">Sitio Web: www.corpologistics.com</p>
+      </div>
+
+      <!-- Bloque Número de Consecutivo y Estado -->
+      <div class="w-1/3 text-right bg-slate-50 p-3 rounded border border-slate-200">
+        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Comprobante de Compra</h3>
+        <p class="text-base font-extrabold text-blue-600 font-mono mt-1">PUR-2026-000849</p>
+        <p class="text-[10px] text-slate-400 font-mono">UUID: doc_9b1deb4d-3b7d</p>
+        <div class="mt-2 inline-block px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 bg-emerald-100 rounded">
+          COMPRA COMPLETADA
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTEXTO DE FACTURACIÓN Y FECHAS -->
+    <section class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-slate-50 p-3 rounded border border-slate-200">
+        <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-300 pb-1 mb-2">Datos de Facturación Interna</h4>
+        <div class="grid grid-cols-2 gap-y-1 text-xs">
+          <span class="text-slate-500">Sucursal / Caja:</span> <span class="font-medium text-slate-800">CR-01 / POS-03</span>
+          <span class="text-slate-500">N° Factura:</span> <span class="font-medium text-slate-800">FAC-001-0004521</span>
+          <span class="text-slate-500">N° Transacción:</span> <span class="font-medium text-slate-800">TXN-9983104</span>
+          <span class="text-slate-500">Estado del Pago:</span> <span class="font-semibold text-emerald-600">PAGADO</span>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded border border-slate-200">
+        <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-300 pb-1 mb-2">Fechas y Registro (America/Costa_Rica)</h4>
+        <div class="grid grid-cols-2 gap-y-1 text-xs">
+          <span class="text-slate-500">Fecha de Compra:</span> <span class="font-medium text-slate-800">05/08/2026 14:30:00</span>
+          <span class="text-slate-500">Fecha Facturación:</span> <span class="font-medium text-slate-800">05/08/2026 14:32:10</span>
+          <span class="text-slate-500">Emisión del PDF:</span> <span class="font-medium text-slate-800">07/08/2026 11:22:21</span>
+          <span class="text-slate-500">N° Reimpresiones:</span> <span class="font-medium text-slate-800">0 (Original)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLIENTE Y PROVEEDOR -->
+    <section class="grid grid-cols-2 gap-4 mb-6">
+      <div class="border border-slate-200 rounded p-3">
+        <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-200 pb-1 mb-2">Información del Cliente</h4>
+        <p class="font-bold text-slate-900 text-sm">Alejandro Silva Vargas</p>
+        <p class="text-xs text-slate-600">ID Fiscal: 1-1123-0456 (ID Sistema: cust_10924)</p>
+        <p class="text-xs text-slate-600">Correo: asilva@empresa.com | Tel: +506 8888-4433</p>
+        <p class="text-xs text-slate-600 mt-1">Dirección: Residencial Los Laureles, Casa 42B, Escazú, San José</p>
+      </div>
+
+      <div class="border border-slate-200 rounded p-3">
+        <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-200 pb-1 mb-2">Información del Proveedor</h4>
+        <p class="font-bold text-slate-900 text-sm">Global Tech Distributors Ltd. (Global Tech S.A.)</p>
+        <p class="text-xs text-slate-600">Contacto: Ventas Corporativas</p>
+        <p class="text-xs text-slate-600">Correo: orders@globaltech.com | Tel: +1 305-555-0199</p>
+        <p class="text-xs text-slate-600 mt-1">Categoría: Hardware & Electrónica | Estado: ACTIVO</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN CONDICIONAL: MOTIVO DE RECHAZO (DESHABILITADO / EJEMPLO) -->
+    <!-- 
+    <div class="mb-6 p-3 bg-red-50 border border-red-200 rounded text-xs">
+      <h4 class="font-bold text-red-800 uppercase mb-1">Motivo del Rechazo de la Compra</h4>
+      <p><span class="font-semibold">Razón:</span> Fondos insuficientes o discrepancia de datos.</p>
+      <p><span class="font-semibold">Rechazado por:</span> Administrador (usr_adm_9011) el 05/08/2026 15:00:00</p>
+      <p><span class="font-semibold">Comentario:</span> Transacción cancelada por solicitud del cliente.</p>
+    </div>
+    -->
+
+    <!-- TABLA PRINCIPAL DE DETALLE DE COMPRA -->
+    <section class="mb-6 overflow-hidden">
+      <table class="w-full text-left border-collapse border border-slate-200">
+        <thead>
+          <tr class="bg-slate-900 text-white text-[11px] uppercase tracking-wider">
+            <th class="p-2 border border-slate-800">Código</th>
+            <th class="p-2 border border-slate-800">Producto / Descripción</th>
+            <th class="p-2 border border-slate-800 text-center">Cant.</th>
+            <th class="p-2 border border-slate-800 text-right">Precio U.</th>
+            <th class="p-2 border border-slate-800 text-right">Desc.</th>
+            <th class="p-2 border border-slate-800 text-right">Imp.</th>
+            <th class="p-2 border border-slate-800 text-right">Subtotal</th>
+            <th class="p-2 border border-slate-800 text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody class="text-xs divide-y divide-slate-200">
+          <tr>
+            <td class="p-2 font-mono text-slate-600 border">PROD-901</td>
+            <td class="p-2 border">
+              <p class="font-bold text-slate-800">Servidor Rack 1U Xeon E-2300</p>
+              <p class="text-[10px] text-slate-500">Servidor de montaje en rack, 32GB RAM, 2x1TB SSD NVMe. Incluye rieles.</p>
+            </td>
+            <td class="p-2 text-center border font-semibold">2</td>
+            <td class="p-2 text-right border">$1,450.00</td>
+            <td class="p-2 text-right border text-slate-500">$50.00</td>
+            <td class="p-2 text-right border text-slate-500">$182.00</td>
+            <td class="p-2 text-right border">$2,850.00</td>
+            <td class="p-2 text-right border font-bold text-slate-900">$3,032.00</td>
+          </tr>
+          <!-- Fila adicional de ejemplo -->
+          <tr class="bg-slate-50/50">
+            <td class="p-2 font-mono text-slate-600 border">PROD-304</td>
+            <td class="p-2 border">
+              <p class="font-bold text-slate-800">Switch Gestionable 24 Puertos Gigabit</p>
+              <p class="text-[10px] text-slate-500">Switch Layer 2 con 4 puertos SFP uplink.</p>
+            </td>
+            <td class="p-2 text-center border font-semibold">1</td>
+            <td class="p-2 text-right border">$227.00</td>
+            <td class="p-2 text-right border text-slate-500">$0.00</td>
+            <td class="p-2 text-right border text-slate-500">$0.00</td>
+            <td class="p-2 text-right border">$227.00</td>
+            <td class="p-2 text-right border font-bold text-slate-900">$227.00</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- RESUMEN DE TOTALES Y MÉTODO DE PAGO -->
+    <section class="grid grid-cols-12 gap-4 mb-6">
+      
+      <!-- Método de pago y observaciones (Izquierda - 7 Columnas) -->
+      <div class="col-span-7 space-y-3">
+        <div class="bg-slate-50 p-3 rounded border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-200 pb-1 mb-2">Método de Pago</h4>
+          <div class="grid grid-cols-2 gap-y-1 text-xs">
+            <span class="text-slate-500">Tipo:</span> <span class="font-bold text-slate-800">TRANSFERENCIA BANCARIA</span>
+            <span class="text-slate-500">N° Autorización:</span> <span class="font-mono text-slate-800">AUT-98312048</span>
+            <span class="text-slate-500">Ref. Bancaria:</span> <span class="font-mono text-slate-800">BN-CR-901238491</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-3 rounded border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-700 uppercase border-b border-slate-200 pb-1 mb-1">Observaciones y Notas</h4>
+          <p class="text-[11px] text-slate-600"><span class="font-semibold">Cliente:</span> Entregar en el horario de 8:00 AM a 12:00 PM.</p>
+          <p class="text-[11px] text-slate-600"><span class="font-semibold">Admin:</span> Cliente preferencial - Prioridad de despacho.</p>
+          <p class="text-[11px] text-slate-600"><span class="font-semibold">Proveedor:</span> Garantía directa de 24 meses con fabricante.</p>
+        </div>
+      </div>
+
+      <!-- Cuadro de Totales (Derecha - 5 Columnas) -->
+      <div class="col-span-5 bg-slate-50 p-3 rounded border border-slate-200 text-xs">
+        <div class="space-y-1.5 border-b border-slate-300 pb-2">
+          <div class="flex justify-between text-slate-600">
+            <span>Subtotal General:</span>
+            <span class="font-semibold">$3,077.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Descuento Total:</span>
+            <span class="font-semibold text-red-600">-$50.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Impuestos Apl.:</span>
+            <span class="font-semibold">$182.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Costo de Envío:</span>
+            <span class="font-semibold">$50.00</span>
+          </div>
+        </div>
+
+        <div class="flex justify-between text-sm font-black text-slate-900 py-2 border-b border-slate-300">
+          <span>MONTO FINAL:</span>
+          <span class="text-base text-blue-700">$3,259.00</span>
+        </div>
+
+        <div class="space-y-1 pt-2 text-[11px]">
+          <div class="flex justify-between text-slate-600">
+            <span>Total Cancelado:</span>
+            <span class="font-semibold text-slate-800">$3,259.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Cambio Entregado:</span>
+            <span class="font-semibold text-slate-800">$0.00</span>
+          </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Saldo Pendiente:</span>
+            <span class="font-bold text-emerald-600">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAZABILIDAD E HISTORIAL DE LA COMPRA -->
+    <section class="mb-6">
+      <h4 class="text-xs font-bold text-slate-700 uppercase mb-2">Historial de Transacción y Trazabilidad</h4>
+      <div class="grid grid-cols-4 gap-2 text-[10px]">
+        <div class="p-2 bg-slate-50 rounded border border-slate-200">
+          <p class="font-bold text-slate-800">Compra Registrada</p>
+          <p class="text-slate-500">05/08/2026 14:30</p>
+          <p class="text-slate-600">Por: asilva@empresa.com</p>
+        </div>
+        <div class="p-2 bg-slate-50 rounded border border-slate-200">
+          <p class="font-bold text-slate-800">Pago Aprobado</p>
+          <p class="text-slate-500">05/08/2026 14:32</p>
+          <p class="text-slate-600">Por: SYSTEM_GATEWAY</p>
+        </div>
+        <div class="p-2 bg-slate-50 rounded border border-slate-200">
+          <p class="font-bold text-slate-800">Factura Generada</p>
+          <p class="text-slate-500">05/08/2026 14:32</p>
+          <p class="text-slate-600">Por: usr_adm_9011</p>
+        </div>
+        <div class="p-2 bg-slate-50 rounded border border-slate-200">
+          <p class="font-bold text-slate-800">Pedido Entregado</p>
+          <p class="text-slate-500">06/08/2026 10:15</p>
+          <p class="text-slate-600">Por: Logística Express</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIE DE PÁGINA (METADATOS TÉCNICOS Y AUDITORÍA) -->
+    <footer class="border-t border-slate-200 pt-4 mt-8 text-[10px] text-slate-500 flex justify-between items-end">
+      <div>
+        <p class="font-semibold text-slate-600">Documento generado automáticamente por el Dashboard Administrativo v2.4.1</p>
+        <p>Usuario generador: Carlos Mendoza (usr_adm_9011) | Hash: e3b0c44298fc1c149afbf4c8996fb924...</p>
+        <p>Este comprobante es una representación física/digital válida de la transacción interna.</p>
+      </div>
+      <div class="text-right">
+        <p class="font-mono text-slate-400">Página 1 de 1</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- SCRIPT PARA DESCARGA DIRECTA A PDF -->
+  <script>
+    function descargarPDF() {
+      const elemento = id = document.getElementById('documento-pdf');
+      const opciones = {
+        margin:       0.3,
+        filename:     'Comprobante_PUR-2026-000849.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opciones).from(elemento).save();
+    }
+  </script>
+</body>
+</html>
