@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Inicio de sesión del sistema administrativo NovaAdmin CR">
+  <title>Iniciar sesión | NovaAdmin CR</title>
+  <link rel="icon" href="../src/img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../src/style/styles2.css">
+</head>
+<body>
+  <button id="login-mobile-preview-toggle" class="preview-toggle" type="button" aria-pressed="false">
+    <span data-icon="smartphone"></span><span class="preview-toggle-label">Vista móvil</span>
+  </button>
+
+  <main class="login-page">
+    <section class="login-shell" aria-labelledby="login-title">
+      <div class="login-visual">
+        <div class="visual-brand">
+          <img src="../src/img/logo.svg" alt="Logo de NovaAdmin CR">
+          <div><strong>NovaAdmin CR</strong><small>Gestión empresarial inteligente</small></div>
+        </div>
+
+        <div class="visual-copy">
+          <h1>Administra tu negocio desde un solo lugar.</h1>
+          <p>Controla usuarios, productos y proveedores con una interfaz moderna, segura y completamente responsive.</p>
+        </div>
+
+        <img class="visual-image" src="../src/img/login-illustration.svg" alt="Ilustración de un dashboard administrativo">
+
+        <div class="visual-features" aria-label="Características principales">
+          <span><span class="feature-icon" data-icon="checkCircle"></span>Datos persistentes</span>
+          <span><span class="feature-icon" data-icon="checkCircle"></span>Control por roles</span>
+          <span><span class="feature-icon" data-icon="checkCircle"></span>CRUD completo</span>
+        </div>
+      </div>
+
+      <div class="login-panel">
+        <p class="login-kicker">Acceso seguro</p>
+        <h2 id="login-title">Bienvenido de nuevo</h2>
+        <p class="login-subtitle">Ingrese sus credenciales para acceder al panel administrativo.</p>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="form-field">
+            <label for="email">Correo electrónico</label>
+            <div class="input-wrap">
+              <span class="input-icon" data-icon="mail" aria-hidden="true"></span>
+              <input id="email" name="email" type="email" autocomplete="username" placeholder="nombre@empresa.cr" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="password">Contraseña</label>
+            <div class="input-wrap">
+              <span class="input-icon" data-icon="lock" aria-hidden="true"></span>
+              <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Ingrese su contraseña" required>
+              <button id="password-toggle" class="password-toggle" type="button" aria-label="Mostrar contraseña"><span data-icon="eye"></span></button>
+            </div>
+          </div>
+
+          <p id="login-message" class="form-message" role="alert" aria-live="polite"></p>
+          <button id="login-button" class="login-button" type="submit"><span data-icon="arrowRight"></span> Ingresar al sistema</button>
+        </form>
+
+        <div class="registration-actions" aria-label="Opciones de registro">
+          <button id="open-client-register" class="registration-button" type="button"><span data-icon="userPlus"></span><span><strong>Registrarse como cliente</strong><small>Crear una cuenta para comprar productos</small></span></button>
+          <button id="open-supplier-application" class="registration-button" type="button"><span data-icon="store"></span><span><strong>Quiero ser proveedor</strong><small>Enviar solicitud para aprobación</small></span></button>
+        </div>
+
+        <section class="demo-box" aria-labelledby="demo-title">
+          <h3 id="demo-title">Cuentas de demostración</h3>
+          <p>Seleccione una cuenta para completar el formulario automáticamente.</p>
+          <div class="demo-grid">
+            <button class="demo-account" type="button" data-demo-email="admin@nova.cr" data-demo-password="Admin123*">
+              <strong>Administrador</strong><small>Acceso CRUD completo</small>
+            </button>
+            <button class="demo-account" type="button" data-demo-email="cliente@nova.cr" data-demo-password="Cliente123*">
+              <strong>Cliente</strong><small>Catálogo, carrito y compras</small>
+            </button>
+          </div>
+        </section>
+
+        <div class="sound-hint"><span data-icon="volume1"></span><span>Los botones y notificaciones incluyen retroalimentación sonora.</span><button id="login-sound-test" type="button">Probar sonido</button></div>
+        <div class="security-note"><span class="security-icon" data-icon="shieldCheck" aria-hidden="true"></span><span>Este proyecto académico utiliza LocalStorage. En un sistema real, la autenticación debe realizarse en un servidor seguro.</span></div>
+        <footer class="login-footer">NovaAdmin CR · HTML5, CSS3, JavaScript y LocalStorage</footer>
+      </div>
+    </section>
+  </main>
+
+  <div id="client-register-modal" class="modal-backdrop" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="client-register-title">
+      <header class="modal-header"><div><h3 id="client-register-title">Crear cuenta de cliente</h3><small>La cuenta quedará activa inmediatamente.</small></div><button class="modal-icon-button" type="button" data-close-modal="client-register-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+      <form id="client-register-form" novalidate>
+        <div class="modal-body form-grid">
+          <div class="form-field full"><label for="register-name">Nombre completo *</label><input id="register-name" maxlength="90" required></div>
+          <div class="form-field"><label for="register-identification">Identificación</label><input id="register-identification" maxlength="20" placeholder="1-1234-5678"></div>
+          <div class="form-field"><label for="register-phone">Teléfono</label><input id="register-phone" type="tel" data-phone-input maxlength="16" inputmode="tel" autocomplete="tel" pattern="\+?[0-9]{8,15}" placeholder="+50688888888"></div>
+          <div class="form-field full"><label for="register-email">Correo electrónico *</label><input id="register-email" type="email" maxlength="90" required></div>
+          <div class="form-field"><label for="register-password">Contraseña *</label><input id="register-password" type="password" minlength="8" required></div>
+          <div class="form-field"><label for="register-password-confirm">Confirmar contraseña *</label><input id="register-password-confirm" type="password" minlength="8" required></div>
+          <p id="client-register-message" class="form-message full" role="alert" aria-live="polite"></p>
+        </div>
+        <footer class="modal-footer"><button class="modal-button secondary" type="button" data-close-modal="client-register-modal">Cancelar</button><button class="modal-button primary" type="submit"><span data-icon="userPlus"></span> Crear cuenta</button></footer>
+      </form>
+    </section>
+  </div>
+
+  <div id="supplier-application-modal" class="modal-backdrop" aria-hidden="true">
+    <section class="modal large" role="dialog" aria-modal="true" aria-labelledby="supplier-application-title">
+      <header class="modal-header"><div><h3 id="supplier-application-title">Solicitud para ser proveedor</h3><small>El administrador deberá aprobar la solicitud antes de que pueda iniciar sesión.</small></div><button class="modal-icon-button" type="button" data-close-modal="supplier-application-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+      <form id="supplier-application-form" novalidate>
+        <div class="modal-body form-grid">
+          <div class="form-field"><label for="supplier-company">Empresa *</label><input id="supplier-company" maxlength="90" required></div>
+          <div class="form-field"><label for="supplier-legal-id">Cédula jurídica *</label><input id="supplier-legal-id" maxlength="22" placeholder="3-101-123456" required></div>
+          <div class="form-field"><label for="supplier-contact">Persona de contacto *</label><input id="supplier-contact" maxlength="90" required></div>
+          <div class="form-field"><label for="supplier-email">Correo electrónico *</label><input id="supplier-email" type="email" maxlength="90" required></div>
+          <div class="form-field"><label for="supplier-phone">Teléfono *</label><input id="supplier-phone" type="tel" data-phone-input maxlength="16" inputmode="tel" autocomplete="tel" pattern="\+?[0-9]{8,15}" placeholder="+50622000000" required></div>
+          <div class="form-field"><label for="supplier-category">Categoría *</label><input id="supplier-category" maxlength="40" placeholder="Tecnología, oficina, servicios..." required></div>
+          <div class="form-field"><label for="supplier-province">Provincia *</label><select id="supplier-province" required><option value="">Seleccione</option><option>San José</option><option>Alajuela</option><option>Cartago</option><option>Heredia</option><option>Guanacaste</option><option>Puntarenas</option><option>Limón</option></select></div>
+          <div class="form-field"><label for="supplier-password">Contraseña para la cuenta *</label><input id="supplier-password" type="password" minlength="8" required></div>
+          <div class="form-field"><label for="supplier-password-confirm">Confirmar contraseña *</label><input id="supplier-password-confirm" type="password" minlength="8" required></div>
+          <div class="form-field full"><label for="supplier-notes">Información adicional</label><textarea id="supplier-notes" maxlength="260" placeholder="Productos o servicios que ofrece la empresa"></textarea></div>
+          <p id="supplier-application-message" class="form-message full" role="alert" aria-live="polite"></p>
+        </div>
+        <footer class="modal-footer"><button class="modal-button secondary" type="button" data-close-modal="supplier-application-modal">Cancelar</button><button class="modal-button primary" type="submit"><span data-icon="clipboardCheck"></span> Enviar solicitud</button></footer>
+      </form>
+    </section>
+  </div>
+
+  <script src="../src/js/app.js"></script>
+  <script src="../src/js/index.js"></script>
+</body>
+</html>

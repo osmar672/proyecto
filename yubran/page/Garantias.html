@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Historial de compras y gestión de garantías de NovaAdmin CR">
+  <title>Garantías | NovaAdmin CR</title>
+  <link rel="icon" href="../src/img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../src/style/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside id="sidebar" class="sidebar" aria-label="Navegación principal">
+    <div class="sidebar-header">
+      <a class="brand" href="Dashboard.html">
+        <img src="../src/img/logo.svg" alt="">
+        <span class="brand-copy"><span class="brand-name">NovaAdmin CR</span><span class="brand-tagline">Sistema administrativo</span></span>
+      </a>
+      <button id="sidebar-toggle" class="icon-button desktop-sidebar-toggle" type="button" aria-label="Contraer menú"><span data-icon="menu"></span></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-link" data-nav="dashboard" href="Dashboard.html"><span class="nav-icon" data-icon="dashboard"></span><span class="nav-label">Dashboard</span></a>
+      <a class="nav-link" data-nav="assistant" href="AsistenteIA.html"><span class="nav-icon" data-icon="brain"></span><span class="nav-label">Asistente IA</span></a>
+      <a class="nav-link" data-nav="usuarios" href="Usuarios.html"><span class="nav-icon" data-icon="users"></span><span class="nav-label">Usuarios</span></a>
+      <a class="nav-link" data-nav="productos" href="Productos.html"><span class="nav-icon" data-icon="box"></span><span class="nav-label">Productos</span></a>
+      <a class="nav-link" data-nav="warranties" href="Garantias.html"><span class="nav-icon" data-icon="shieldCheck"></span><span class="nav-label">Garantías</span></a>
+      <a class="nav-link" data-nav="proveedores" href="Proveedores.html"><span class="nav-icon" data-icon="truck"></span><span class="nav-label">Proveedores</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-profile">
+        <span class="avatar" data-user-avatar>US</span>
+        <span class="sidebar-profile-copy"><strong data-user-name>Usuario</strong><small data-user-role>Rol</small></span>
+      </div>
+      <button id="logout-button" class="nav-link" type="button" style="width:100%;border:0;background:transparent;cursor:pointer;text-align:left;"><span class="nav-icon" data-icon="logout"></span><span class="nav-label">Cerrar sesión</span></button>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="mobile-menu-button" class="icon-button mobile-menu" type="button" aria-label="Abrir menú"><span data-icon="menu"></span></button>
+        <div><p class="page-kicker">Postventa y soporte</p><h1 class="page-title">Garantías</h1></div>
+      </div>
+      <div class="topbar-actions">
+        <span class="role-pill"><span class="status-dot"></span><span data-user-role>Rol</span></span>
+        <button id="sound-toggle" class="icon-button sound-button" type="button" aria-label="Activar o desactivar sonidos"><span data-icon="volume2"></span></button>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Cambiar tema"><span data-icon="moon"></span></button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="section-heading warranty-heading">
+        <div>
+          <h2 id="warranty-page-title">Garantías y compras</h2>
+          <p id="warranty-page-description">Consulte compras y solicitudes de garantía.</p>
+        </div>
+        <div class="warranty-policy-pill"><span data-icon="shieldCheck"></span><span><strong>Política académica</strong><small>12 meses desde la fecha de compra</small></span></div>
+      </section>
+
+      <section class="stats-grid" aria-label="Resumen de garantías">
+        <article class="stat-card" style="--card-color:#4f46e5"><span class="stat-icon" data-icon="receipt"></span><div class="stat-copy"><small>Compras visibles</small><strong id="stat-orders">0</strong></div></article>
+        <article class="stat-card" style="--card-color:#d97706"><span class="stat-icon" data-icon="clock"></span><div class="stat-copy"><small>Tickets pendientes</small><strong id="stat-pending">0</strong></div></article>
+        <article class="stat-card" style="--card-color:#059669"><span class="stat-icon" data-icon="shieldCheck"></span><div class="stat-copy"><small>Garantías aprobadas</small><strong id="stat-approved">0</strong></div></article>
+        <article class="stat-card" style="--card-color:#dc2626"><span class="stat-icon" data-icon="circleOff"></span><div class="stat-copy"><small>Solicitudes rechazadas</small><strong id="stat-rejected">0</strong></div></article>
+      </section>
+
+      <section id="client-warranty-panel" class="warranty-layout hidden">
+        <article class="card warranty-card">
+          <header class="card-header"><div><h2>Mis compras con garantía</h2><p>Seleccione un producto comprado para abrir un ticket de garantía.</p></div></header>
+          <div class="warranty-toolbar">
+            <div class="field"><label for="client-order-search">Buscar compra</label><div class="input-wrap"><span class="input-icon" data-icon="search"></span><input id="client-order-search" type="search" placeholder="Orden, producto o código"></div></div>
+          </div>
+          <div id="client-purchases" class="warranty-purchase-list"></div>
+          <div id="client-purchases-empty" class="empty-state hidden"><span data-icon="receipt"></span><h3>No hay compras registradas</h3><p>Complete una compra desde Productos para solicitar una garantía.</p></div>
+        </article>
+
+        <article class="card warranty-card">
+          <header class="card-header"><div><h2>Mis tickets de garantía</h2><p>Revise el estado y las respuestas del administrador.</p></div></header>
+          <div id="client-tickets" class="warranty-ticket-list"></div>
+          <div id="client-tickets-empty" class="empty-state hidden"><span data-icon="ticket"></span><h3>No ha creado tickets</h3><p>Sus solicitudes de garantía aparecerán aquí.</p></div>
+        </article>
+      </section>
+
+      <section id="admin-warranty-panel" class="warranty-layout hidden">
+        <article class="card warranty-card warranty-card-full">
+          <header class="card-header"><div><h2>Historial de compras de la empresa</h2><p>Use el historial para comprobar fecha, cliente, productos, cantidades y forma de pago antes de validar una garantía.</p></div></header>
+          <div class="warranty-toolbar warranty-toolbar-admin">
+            <div class="field"><label for="admin-order-search">Buscar compra</label><div class="input-wrap"><span class="input-icon" data-icon="search"></span><input id="admin-order-search" type="search" placeholder="Orden, cliente, producto o código"></div></div>
+          </div>
+          <div class="table-wrap warranty-table-wrap">
+            <table>
+              <thead><tr><th>Orden</th><th>Cliente</th><th>Fecha</th><th>Productos</th><th>Pago</th><th>Total</th><th>Acciones</th></tr></thead>
+              <tbody id="admin-orders-body"></tbody>
+            </table>
+          </div>
+          <div id="admin-orders-empty" class="empty-state hidden"><span data-icon="receipt"></span><h3>No hay compras registradas</h3><p>Las compras confirmadas por clientes aparecerán aquí.</p></div>
+        </article>
+
+        <article class="card warranty-card warranty-card-full">
+          <header class="card-header"><div><h2>Tickets de garantía</h2><p>Revise la evidencia de compra, valide los requisitos y responda al cliente.</p></div></header>
+          <div class="warranty-toolbar warranty-toolbar-admin">
+            <div class="field"><label for="admin-ticket-search">Buscar ticket</label><div class="input-wrap"><span class="input-icon" data-icon="search"></span><input id="admin-ticket-search" type="search" placeholder="Ticket, cliente, orden o producto"></div></div>
+            <div class="field"><label for="ticket-status-filter">Estado</label><select id="ticket-status-filter"><option value="">Todos</option><option>Pendiente</option><option>En revisión</option><option>Aprobada</option><option>Rechazada</option></select></div>
+          </div>
+          <div class="table-wrap warranty-table-wrap">
+            <table>
+              <thead><tr><th>Ticket</th><th>Cliente</th><th>Compra</th><th>Producto</th><th>Requisitos</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="admin-tickets-body"></tbody>
+            </table>
+          </div>
+          <div id="admin-tickets-empty" class="empty-state hidden"><span data-icon="ticket"></span><h3>No hay tickets de garantía</h3><p>Las solicitudes de los clientes aparecerán aquí.</p></div>
+        </article>
+      </section>
+
+      <footer class="footer-note">NovaAdmin CR · Flujo académico de garantía basado en compras registradas y LocalStorage</footer>
+    </main>
+  </div>
+</div>
+
+<div id="warranty-request-modal" class="modal-backdrop" aria-hidden="true">
+  <section class="modal warranty-modal" role="dialog" aria-modal="true" aria-labelledby="warranty-request-title">
+    <header class="modal-header"><div><h3 id="warranty-request-title">Solicitar garantía</h3><small>La solicitud generará un ticket para revisión administrativa.</small></div><button class="icon-button" type="button" data-close-modal="warranty-request-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+    <form id="warranty-request-form" novalidate>
+      <div class="modal-body">
+        <input id="warranty-order-id" type="hidden"><input id="warranty-product-id" type="hidden">
+        <div id="warranty-request-summary" class="warranty-request-summary"></div>
+        <div class="form-grid">
+          <div class="form-field"><label for="warranty-quantity">Cantidad *</label><select id="warranty-quantity" required></select></div>
+          <div class="form-field"><label for="warranty-issue">Tipo de problema *</label><select id="warranty-issue" required><option value="">Seleccione</option><option>Falla de funcionamiento</option><option>Defecto de fabricación</option><option>Producto no enciende</option><option>Problema de componentes</option><option>Otro</option></select></div>
+          <div class="form-field full"><label for="warranty-description">Explique el problema *</label><textarea id="warranty-description" minlength="20" maxlength="600" placeholder="Describa qué sucede con el producto, cuándo comenzó la falla y cualquier detalle útil para validar la garantía." required></textarea><small id="warranty-request-error" class="error-text"></small></div>
+        </div>
+      </div>
+      <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="warranty-request-modal">Cancelar</button><button class="button button-primary" type="submit"><span data-icon="ticket"></span> Crear ticket de garantía</button></footer>
+    </form>
+  </section>
+</div>
+
+<div id="order-detail-modal" class="modal-backdrop" aria-hidden="true">
+  <section class="modal warranty-modal" role="dialog" aria-modal="true" aria-labelledby="order-detail-title">
+    <header class="modal-header"><div><h3 id="order-detail-title">Detalle de compra</h3><small>Información almacenada al confirmar la orden.</small></div><button class="icon-button" type="button" data-close-modal="order-detail-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+    <div id="order-detail-content" class="modal-body"></div>
+    <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="order-detail-modal">Cerrar</button></footer>
+  </section>
+</div>
+
+<div id="ticket-detail-modal" class="modal-backdrop" aria-hidden="true">
+  <section class="modal warranty-modal warranty-ticket-modal" role="dialog" aria-modal="true" aria-labelledby="ticket-detail-title">
+    <header class="modal-header"><div><h3 id="ticket-detail-title">Ticket de garantía</h3><small id="ticket-detail-subtitle">Seguimiento de la solicitud.</small></div><button class="icon-button" type="button" data-close-modal="ticket-detail-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+    <div id="ticket-detail-content" class="modal-body"></div>
+    <form id="ticket-admin-response-form" class="hidden" novalidate>
+      <div class="modal-body warranty-admin-response">
+        <input id="ticket-response-id" type="hidden">
+        <div class="form-grid">
+          <div class="form-field"><label for="ticket-new-status">Decisión / estado *</label><select id="ticket-new-status" required><option>En revisión</option><option>Aprobada</option><option>Rechazada</option></select></div>
+          <div class="form-field full"><label for="ticket-admin-message">Respuesta al cliente *</label><textarea id="ticket-admin-message" minlength="10" maxlength="700" placeholder="Explique la decisión, los requisitos revisados y los siguientes pasos." required></textarea><small id="ticket-response-error" class="error-text"></small></div>
+        </div>
+      </div>
+      <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="ticket-detail-modal">Cancelar</button><button class="button button-primary" type="submit"><span data-icon="messageSquare"></span> Responder ticket</button></footer>
+    </form>
+    <footer id="ticket-client-footer" class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="ticket-detail-modal">Cerrar</button></footer>
+  </section>
+</div>
+
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+<script src="../src/js/app.js"></script>
+<script src="../src/js/Garantias.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Logo NovaAdmin</title>
+  <defs>
+    <linearGradient id="g" x1="18" y1="16" x2="110" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#4F46E5"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="30" fill="url(#g)"/>
+  <path d="M34 88V42c0-7 8-11 14-7l32 22V40c0-5 4-9 9-9s9 4 9 9v48c0 7-8 11-14 7L52 73v15c0 5-4 9-9 9s-9-4-9-9Z" fill="white"/>
+  <circle cx="88" cy="42" r="7" fill="#A7F3D0"/>
+</svg>

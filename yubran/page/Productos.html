@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Administración y catálogo de productos del sistema NovaAdmin CR">
+  <title>Productos | NovaAdmin CR</title>
+  <link rel="icon" href="../src/img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../src/style/style.css">
+</head>
+<body>
+<div class="app-shell">
+<aside id="sidebar" class="sidebar" aria-label="Navegación principal">
+  <div class="sidebar-header">
+    <a class="brand" href="Dashboard.html">
+      <img src="../src/img/logo.svg" alt="">
+      <span class="brand-copy"><span class="brand-name">NovaAdmin CR</span><span class="brand-tagline">Sistema administrativo</span></span>
+    </a>
+    <button id="sidebar-toggle" class="icon-button desktop-sidebar-toggle" type="button" aria-label="Contraer menú"><span data-icon="menu"></span></button>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-link" data-nav="dashboard" href="Dashboard.html"><span class="nav-icon" data-icon="dashboard"></span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-link" data-nav="assistant" href="AsistenteIA.html"><span class="nav-icon" data-icon="brain"></span><span class="nav-label">Asistente IA</span></a>
+    <a class="nav-link" data-nav="usuarios" href="Usuarios.html"><span class="nav-icon" data-icon="users"></span><span class="nav-label">Usuarios</span></a>
+    <a class="nav-link" data-nav="productos" href="Productos.html"><span class="nav-icon" data-icon="box"></span><span class="nav-label">Productos</span></a>
+    <a class="nav-link" data-nav="warranties" href="Garantias.html"><span class="nav-icon" data-icon="shieldCheck"></span><span class="nav-label">Garantías</span></a>
+    <a class="nav-link" data-nav="proveedores" href="Proveedores.html"><span class="nav-icon" data-icon="truck"></span><span class="nav-label">Proveedores</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-profile">
+      <span class="avatar" data-user-avatar>US</span>
+      <span class="sidebar-profile-copy"><strong data-user-name>Usuario</strong><small data-user-role>Rol</small></span>
+    </div>
+    <button id="logout-button" class="nav-link" type="button" style="width:100%;border:0;background:transparent;cursor:pointer;text-align:left;"><span class="nav-icon" data-icon="logout"></span><span class="nav-label">Cerrar sesión</span></button>
+  </div>
+</aside>
+<div class="main-wrapper">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button id="mobile-menu-button" class="icon-button mobile-menu" type="button" aria-label="Abrir menú"><span data-icon="menu"></span></button>
+      <div><p class="page-kicker">Inventario y catálogo</p><h1 class="page-title">Productos</h1></div>
+    </div>
+    <div class="topbar-actions">
+      <button id="cart-button" class="icon-button cart-button hidden" type="button" aria-label="Abrir carrito de compras"><span data-icon="shoppingCart"></span><span id="cart-count" class="cart-count">0</span></button>
+      <span class="role-pill"><span class="status-dot"></span><span data-user-role>Rol</span></span>
+      <button id="sound-toggle" class="icon-button sound-button" type="button" aria-label="Activar o desactivar sonidos"><span data-icon="volume2"></span></button>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Cambiar tema"><span data-icon="moon"></span></button>
+    </div>
+  </header>
+  <main class="content">
+    <section class="section-heading">
+      <div><h2>Administración de Productos</h2><p>Administre el catálogo de productos según los permisos de su cuenta.</p></div>
+      <div class="heading-actions"><button id="print-products" class="button button-secondary" type="button"><span data-icon="printer"></span> Imprimir / PDF</button><button id="new-button" class="button button-primary" type="button"><span data-icon="plus"></span> Nuevo producto</button></div>
+    </section>
+
+    <section id="product-stats" class="stats-grid" aria-label="Estadísticas de productos">
+      <article class="stat-card" style="--card-color:#4f46e5"><span class="stat-icon" data-icon="box"></span><div class="stat-copy"><small>Total registrados</small><strong id="stat-total">0</strong></div></article>
+      <article class="stat-card" style="--card-color:#059669"><span class="stat-icon" data-icon="checkCircle"></span><div class="stat-copy"><small>Activos</small><strong id="stat-active">0</strong></div></article>
+      <article class="stat-card" style="--card-color:#dc2626"><span class="stat-icon" data-icon="circleOff"></span><div class="stat-copy"><small>Inactivos</small><strong id="stat-inactive">0</strong></div></article>
+      <article class="stat-card" style="--card-color:#0284c7"><span class="stat-icon" data-icon="search"></span><div class="stat-copy"><small>Resultados visibles</small><strong id="stat-visible">0</strong></div></article>
+    </section>
+
+    <section class="toolbar" aria-label="Filtros">
+      <div class="field"><label for="search-input">Buscar</label><div class="input-wrap"><span class="input-icon" data-icon="search"></span><input id="search-input" type="search" placeholder="Buscar por nombre, código, categoría o descripción"></div></div>
+      <div class="field"><label for="category-filter">Categoría</label><select id="category-filter"><option value="">Todas</option></select></div>
+      <div class="field"><label for="status-filter">Estado</label><select id="status-filter"><option value="">Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+      <button id="clear-filters" class="button button-secondary" type="button"><span data-icon="filterX"></span> Limpiar filtros</button>
+    </section>
+
+    <section id="client-catalog-card" class="card catalog-shell hidden" aria-label="Catálogo de productos">
+      <div class="table-meta"><span id="catalog-summary">Catálogo</span><span>Seleccione un producto para consultar sus detalles</span></div>
+      <div id="client-catalog" class="product-catalog"></div>
+      <div id="client-empty" class="empty-state hidden"><img src="../src/img/empty-state.svg" alt=""><h3>No se encontraron productos</h3><p>Pruebe con otros filtros.</p></div>
+    </section>
+
+    <section id="admin-products-table" class="card table-card">
+      <div class="table-meta"><span id="result-summary">0 registros</span><span>Los datos se guardan automáticamente</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Producto</th><th>Código</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Proveedor</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="table-body"></tbody></table></div>
+      <div id="empty-state" class="empty-state hidden"><img src="../src/img/empty-state.svg" alt=""><h3>No se encontraron registros</h3><p>Pruebe con otros filtros o agregue un nuevo registro.</p></div>
+      <div class="pagination"><span id="pagination-summary">Página 1 de 1</span><div class="pagination-controls"><button id="prev-page" class="button button-secondary button-small" type="button"><span data-icon="chevronLeft"></span> Anterior</button><span id="page-number" class="page-number">1</span><button id="next-page" class="button button-secondary button-small" type="button">Siguiente <span data-icon="chevronRight"></span></button></div></div>
+    </section>
+
+    <div id="form-modal" class="modal-backdrop" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="form-title">
+        <header class="modal-header"><h3 id="form-title">Nuevo producto</h3><button class="icon-button" type="button" data-close-modal="form-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+        <form id="entity-form" novalidate>
+          <div class="modal-body"><input id="entity-id" type="hidden"><div class="form-grid">
+            <div class="form-field"><label for="code">Código *</label><input id="code" maxlength="20" placeholder="PRD-001" required><small id="error-code" class="error-text"></small></div>
+            <div class="form-field"><label for="name">Nombre *</label><input id="name" maxlength="90" required><small id="error-name" class="error-text"></small></div>
+            <div class="form-field"><label for="category">Categoría *</label><input id="category" maxlength="40" list="category-list" required><datalist id="category-list"><option>Computadoras</option><option>Monitores</option><option>Accesorios</option><option>Redes</option><option>Oficina</option></datalist><small id="error-category" class="error-text"></small></div>
+            <div class="form-field"><label for="supplierId">Proveedor *</label><select id="supplierId" required></select><small id="error-supplierId" class="error-text"></small></div>
+            <div class="form-field"><label for="price">Precio (₡) *</label><input id="price" type="number" min="0" step="100" required><small id="error-price" class="error-text"></small></div>
+            <div class="form-field"><label for="stock">Cantidad *</label><input id="stock" type="number" min="0" step="1" required><small id="error-stock" class="error-text"></small></div>
+            <div class="form-field"><label for="status">Estado *</label><select id="status" required><option>Activo</option><option>Inactivo</option></select><small id="error-status" class="error-text"></small></div>
+            <div class="form-field full"><label for="description">Descripción</label><textarea id="description" maxlength="260" placeholder="Características principales del producto"></textarea><small id="error-description" class="error-text"></small></div>
+            <div class="form-field full">
+              <label for="product-images">Imágenes del producto</label>
+              <div class="image-upload-zone">
+                <span class="image-upload-icon" data-icon="camera"></span>
+                <div><strong>Agregar fotografías</strong><small>Seleccione hasta 4 imágenes JPG, PNG o WebP. Se comprimen automáticamente para LocalStorage.</small></div>
+                <label class="button button-secondary button-small file-button" for="product-images"><span data-icon="image"></span> Seleccionar imágenes</label>
+                <input id="product-images" class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+              </div>
+              <div id="image-previews" class="image-preview-grid" aria-live="polite"></div>
+              <small id="image-upload-status" class="form-help">0 de 4 imágenes seleccionadas.</small>
+              <small id="error-images" class="error-text"></small>
+            </div>
+          </div><p id="permission-note" class="permission-note hidden">Solo el administrador puede crear o modificar productos.</p></div>
+          <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="form-modal">Cancelar</button><button class="button button-primary" type="submit">Guardar cambios</button></footer>
+        </form>
+      </section>
+    </div>
+
+    <div id="detail-modal" class="modal-backdrop" aria-hidden="true">
+      <section class="modal product-detail-modal" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+        <header class="modal-header"><h3 id="detail-title">Detalle del producto</h3><button class="icon-button" type="button" data-close-modal="detail-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+        <div id="detail-content" class="modal-body"></div>
+        <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="detail-modal">Cerrar</button></footer>
+      </section>
+    </div>
+
+    <div id="delete-modal" class="modal-backdrop" aria-hidden="true"><section class="modal small" role="dialog" aria-modal="true" aria-labelledby="delete-title"><div class="modal-body"><div class="confirm-visual" data-icon="alertTriangle"></div><div class="confirm-copy"><h3 id="delete-title">¿Eliminar producto?</h3><p id="delete-copy">Esta acción no se puede deshacer.</p></div></div><footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="delete-modal">Cancelar</button><button id="confirm-delete" class="button button-danger" type="button"><span data-icon="trash"></span> Eliminar definitivamente</button></footer></section></div>
+
+    <div id="cart-modal" class="modal-backdrop" aria-hidden="true">
+      <section class="modal cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+        <header class="modal-header"><div><h3 id="cart-title">Carrito de compras</h3><small class="modal-subtitle">Revise cantidades antes de continuar.</small></div><button class="icon-button" type="button" data-close-modal="cart-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+        <div class="modal-body"><div id="cart-items" class="cart-items"></div><div id="cart-empty" class="cart-empty hidden"><span data-icon="shoppingCart"></span><h3>Su carrito está vacío</h3><p>Agregue productos desde el catálogo.</p></div></div>
+        <footer class="modal-footer cart-footer"><div class="cart-total"><small>Total</small><strong id="cart-total">₡0</strong></div><button class="button button-secondary" type="button" data-close-modal="cart-modal">Seguir viendo</button><button id="checkout-button" class="button button-primary" type="button"><span data-icon="creditCard"></span> Comprar</button></footer>
+      </section>
+    </div>
+
+    <div id="checkout-modal" class="modal-backdrop" aria-hidden="true">
+      <section class="modal checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkout-title">
+        <header class="modal-header"><div><h3 id="checkout-title">Opciones de compra</h3><small class="modal-subtitle">Seleccione la modalidad que desea simular.</small></div><button class="icon-button" type="button" data-close-modal="checkout-modal" aria-label="Cerrar"><span data-icon="x"></span></button></header>
+        <div class="modal-body checkout-layout">
+          <section class="checkout-options">
+            <div class="checkout-section">
+              <div class="checkout-section-heading"><div><span class="eyebrow">Moneda de pago</span><h4>¿Cómo desea pagar?</h4></div><small>El precio base de los productos se administra en colones.</small></div>
+              <div class="currency-choice-grid" role="radiogroup" aria-label="Moneda de pago">
+                <label class="currency-choice-card"><input type="radio" name="payment-currency" value="CRC" checked><span class="payment-method-icon" data-icon="landmark"></span><span><strong>Colones (CRC)</strong><small>Pague el total directamente en colones.</small></span></label>
+                <label class="currency-choice-card"><input type="radio" name="payment-currency" value="USD"><span class="payment-method-icon" data-icon="dollarSign"></span><span><strong>Dólares (USD)</strong><small>Conversión con referencia USD/CRC del BCCR y recargo de 5%.</small></span></label>
+              </div>
+              <div id="exchange-rate-panel" class="exchange-rate-panel hidden" aria-live="polite">
+                <div class="exchange-rate-header"><div><span class="exchange-rate-icon" data-icon="refreshCw"></span><span><strong>Tipo de cambio USD/CRC</strong><small id="exchange-rate-status">Seleccione dólares para consultar la tasa.</small></span></div><button id="refresh-exchange-rate" class="button button-ghost button-small" type="button"><span data-icon="refreshCw"></span> Actualizar</button></div>
+                <div id="exchange-rate-values" class="exchange-rate-values hidden">
+                  <div><small>Referencia BCCR</small><strong id="exchange-reference-rate">—</strong></div>
+                  <div><small>Conversión base</small><strong id="exchange-base-usd">—</strong></div>
+                  <div><small>Recargo empresa (5%)</small><strong id="exchange-markup-usd">—</strong></div>
+                </div>
+                <p class="finance-disclaimer"><span data-icon="info"></span> Si paga en dólares, el sistema convierte el total en colones usando la tasa USD/CRC consultada y luego suma un 5% al monto convertido como margen de cambio de la empresa.</p>
+                <a class="exchange-source-link" href="https://frankfurter.dev/providers/bccr/" target="_blank" rel="noopener noreferrer">Fuente de referencia: Banco Central de Costa Rica (BCCR) vía Frankfurter API</a>
+              </div>
+            </div>
+
+            <div class="checkout-section">
+              <div class="checkout-section-heading"><div><span class="eyebrow">Forma de pago</span><h4>Seleccione una modalidad</h4></div></div>
+              <div class="payment-method-grid" role="radiogroup" aria-label="Método de compra">
+                <label class="payment-method-card"><input type="radio" name="payment-method" value="cash" checked><span class="payment-method-icon" data-icon="wallet"></span><span><strong>Contado</strong><small>Pago completo en una sola exhibición.</small></span></label>
+                <label class="payment-method-card"><input type="radio" name="payment-method" value="installments"><span class="payment-method-icon" data-icon="creditCard"></span><span><strong>Crédito / cuotas sin interés</strong><small>Simulación académica con entidades financieras.</small></span></label>
+              </div>
+            </div>
+            <div id="financing-options" class="financing-options hidden">
+              <div class="form-field"><label for="bank-select">Entidad financiera</label><select id="bank-select"></select></div>
+              <div class="form-field"><label>Plazo disponible</label><div id="installment-options" class="installment-options"></div></div>
+              <p class="finance-disclaimer"><span data-icon="info"></span> Los plazos mostrados son datos de demostración para este proyecto académico y no representan ofertas bancarias reales.</p>
+            </div>
+          </section>
+          <aside class="checkout-summary"><span class="checkout-summary-icon" data-icon="receipt"></span><h3>Resumen de compra</h3><div id="checkout-lines" class="checkout-lines"></div><div id="exchange-summary" class="exchange-summary hidden"><div><span>Subtotal en colones</span><strong id="exchange-summary-crc">₡0</strong></div><div><span>Conversión a USD</span><strong id="exchange-summary-base">US$0.00</strong></div><div><span>Margen de cambio 5%</span><strong id="exchange-summary-markup">US$0.00</strong></div></div><div class="checkout-total-row"><span id="checkout-total-label">Total a pagar</span><strong id="checkout-total">₡0</strong></div><small id="checkout-currency-note" class="checkout-currency-note">Pago seleccionado en colones (CRC).</small><div id="monthly-payment" class="monthly-payment hidden"><small>Cuota mensual simulada</small><strong id="monthly-amount">₡0</strong><span id="monthly-description"></span></div></aside>
+        </div>
+        <footer class="modal-footer"><button class="button button-secondary" type="button" data-close-modal="checkout-modal">Volver</button><button id="confirm-purchase" class="button button-primary" type="button"><span data-icon="shoppingCart"></span> Confirmar compra</button></footer>
+      </section>
+    </div>
+
+    <footer class="footer-note">NovaAdmin CR · Sistema académico desarrollado con HTML5, CSS3, JavaScript y LocalStorage</footer>
+  </main>
+</div>
+</div>
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+<script src="../src/js/app.js"></script>
+<script src="../src/js/crud.js"></script>
+<script src="../src/js/Productos.js"></script>
+</body>
+</html>
